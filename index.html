@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FansSport</title>
+<style>
+:root{--bg:#0b1220;--panel:#121d30;--panel2:#18263d;--line:#263750;--text:#f4f7fb;--muted:#9fb0c7;--accent:#48d6a3;--blue:#65a8ff}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top right,#142c40 0,#0b1220 38%);font-family:Arial,Helvetica,sans-serif;color:var(--text);min-height:100vh}
+header{position:sticky;top:0;z-index:5;background:#0b1220ed;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.nav{max-width:1150px;margin:auto;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.logo{font-size:25px;font-weight:900;letter-spacing:-1px}.logo span{color:var(--accent)}
+.navright{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border:0}
+.navbtn,.backbtn{background:var(--panel2);color:var(--text);padding:10px 14px;border-radius:11px;border:1px solid var(--line);font-weight:700}
+.navbtn.active,.primary{background:var(--accent);color:#071b16;border-color:var(--accent)}
+main{max-width:1150px;margin:0 auto;padding:32px 22px 60px}
+.hero{padding:28px 0 22px}
+.eyebrow{color:var(--accent);font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
+h1{font-size:clamp(32px,6vw,54px);line-height:1.02;margin:12px 0}
+.subtitle{color:var(--muted);font-size:16px;line-height:1.6;max-width:650px}
+.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:20px 0;flex-wrap:wrap}
+.search{background:var(--panel);border:1px solid var(--line);color:var(--text);padding:13px 15px;border-radius:12px;min-width:min(100%,290px);outline:none}
+.sectiontitle{font-size:21px;margin:26px 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:15px}
+.card{background:linear-gradient(145deg,var(--panel),#101a2b);border:1px solid var(--line);border-radius:17px;padding:20px;transition:.18s;min-height:150px}
+.clickcard{cursor:pointer}.clickcard:hover{transform:translateY(-3px);border-color:#4c718b}
+.cardicon{font-size:32px;margin-bottom:15px}.card h3{margin:0 0 7px;font-size:19px}.card p{color:var(--muted);margin:0;line-height:1.45;font-size:14px}
+.cardtop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.arrow{color:var(--accent);font-size:20px}
+.pagehead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0 22px}
+.pagehead h2{font-size:28px;margin:0}
+.backbtn{padding:9px 12px}
+.tablewrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:15px}
+table{width:100%;border-collapse:collapse;min-width:520px}
+th,td{text-align:left;padding:14px 15px;border-bottom:1px solid var(--line);font-size:14px}
+th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.7px;background:#17243a}
+tr:last-child td{border-bottom:0}
+.pos{color:var(--muted);width:45px}.team{font-weight:700}
+.points{font-weight:800;color:var(--accent)}
+.star{background:transparent;color:#8193ab;font-size:21px;padding:3px 7px;border-radius:8px}
+.star.on{color:#ffd166}
+.hint{margin-top:14px;color:var(--muted);font-size:13px;line-height:1.5}
+.empty{padding:30px;text-align:center;color:var(--muted);background:var(--panel);border:1px dashed var(--line);border-radius:15px}
+footer{border-top:1px solid var(--line);color:var(--muted);text-align:center;padding:22px;font-size:12px}
+.hidden{display:none!important}
+@media(max-width:600px){.nav{padding:13px 15px}.logo{font-size:22px}main{padding:24px 15px 45px}.navbtn{padding:9px 10px;font-size:13px}.hero{padding-top:20px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="logo">Fans<span>Sport</span></div>
+    <div class="navright">
+      <button class="navbtn active" id="homeBtn" onclick="showHome()">Deportes</button>
+      <button class="navbtn" id="favBtn" onclick="showFavorites()">⭐ Favoritos <span id="favCount">0</span></button>
+    </div>
+  </div>
+</header>
+<main>
+  <section id="homeView">
+    <div class="hero">
+      <div class="eyebrow">Vive el deporte</div>
+      <h1>Todo el deporte.<br><span style="color:var(--accent)">En un solo lugar.</span></h1>
+      <p class="subtitle">Elige tu deporte, descubre sus competiciones y consulta las clasificaciones. Guarda tus equipos favoritos con ⭐.</p>
+    </div>
+    <div class="toolbar">
+      <h2 class="sectiontitle" style="margin:0">Explora los deportes</h2>
+      <input class="search" id="sportSearch" placeholder="Buscar deporte..." oninput="renderSports()">
+    </div>
+    <div class="grid" id="sportsGrid"></div>
+  </section>
+
+  <section id="leagueView" class="hidden">
+    <div class="pagehead">
+      <button class="backbtn" onclick="showHome()">← Deportes</button>
+      <div><div class="eyebrow" id="sportEyebrow"></div><h2 id="sportTitle"></h2></div>
+    </div>
+    <p class="subtitle">Selecciona una competición para ver su clasificación.</p>
+    <div class="grid" id="leaguesGrid"></div>
+  </section>
+
+  <section id="tableView" class="hidden">
+    <div class="pagehead">
+      <button class="backbtn" onclick="backToLeagues()">← Competiciones</button>
+      <div><div class="eyebrow" id="leagueSport"></div><h2 id="leagueTitle"></h2></div>
+    </div>
+    <div class="toolbar">
+      <div><h3 class="sectiontitle" style="margin:0 0 5px">Clasificación</h3><div class="hint" style="margin:0">Datos de ejemplo para mostrar el funcionamiento de la web.</div></div>
+      <input class="search" id="teamSearch" placeholder="Buscar equipo..." oninput="renderTable()">
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Pos.</th><th>Equipo</th><th>PJ</th><th>Pts</th><th>Favorito</th></tr></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <p class="hint">Pulsa la estrella de un equipo para guardarlo. La página no cambiará de sección al añadir un favorito.</p>
+  </section>
+
+  <section id="favoritesView" class="hidden">
+    <div class="pagehead"><button class="backbtn" onclick="showHome()">← Deportes</button><div><div class="eyebrow">Tu selección</div><h2>⭐ Mis favoritos</h2></div></div>
+    <p class="subtitle">Aquí aparecen los equipos que has guardado.</p>
+    <div class="grid" id="favoritesGrid"></div>
+  </section>
+</main>
+<footer>FansSport · Tu espacio para seguir el deporte</footer>
+<script>
+const sports = [
+ {id:"futbol",name:"Fútbol",icon:"⚽",desc:"Ligas y competiciones de fútbol",leagues:[
+  {id:"laliga",name:"LaLiga",country:"España",teams:[["Real Madrid",10,25],["FC Barcelona",10,24],["Atlético de Madrid",10,21],["Athletic Club",10,18],["Real Sociedad",10,16],["Girona FC",10,15],["Real Betis",10,14],["Valencia CF",10,12]]},
+  {id:"premier",name:"Premier League",country:"Inglaterra",teams:[["Manchester City",10,25],["Arsenal",10,23],["Liverpool",10,22],["Aston Villa",10,19],["Tottenham",10,18],["Manchester United",10,15]]},
+  {id:"champions",name:"Champions League",country:"Europa",teams:[["Real Madrid",6,16],["Bayern Múnich",6,15],["Manchester City",6,14],["PSG",6,13],["Inter",6,12],["Arsenal",6,11]]},
+  {id:"seriea",name:"Serie A",country:"Italia",teams:[["Inter",10,25],["Juventus",10,23],["AC Milan",10,21],["Napoli",10,18],["Roma",10,16]]}
+ ]},
+ {id:"basket",name:"Baloncesto",icon:"🏀",desc:"Competiciones de baloncesto",leagues:[
+  {id:"acb",name:"Liga ACB",country:"España",teams:[["Real Madrid",10,18],["Unicaja",10,17],["FC Barcelona",10,16],["Valencia Basket",10,15],["Baskonia",10,13],["Joventut",10,12]]},
+  {id:"nba",name:"NBA",country:"Estados Unidos",teams:[["Boston Celtics",10,8],["Denver Nuggets",10,8],["Milwaukee Bucks",10,7],["Phoenix Suns",10,7],["Dallas Mavericks",10,6],["Los Angeles Lakers",10,6]]},
+  {id:"euroleague",name:"Euroliga",country:"Europa",teams:[["Real Madrid",10,18],["Olympiacos",10,16],["Panathinaikos",10,15],["FC Barcelona",10,14],["Fenerbahçe",10,13]]}
+ ]},
+ {id:"tenis",name:"Tenis",icon:"🎾",desc:"Circuitos y torneos de tenis",leagues:[
+  {id:"atp",name:"Ranking ATP",country:"Individual masculino",teams:[["Jannik Sinner",0,9500],["Carlos Alcaraz",0,8500],["Novak Djokovic",0,7800],["Daniil Medvedev",0,6200],["Alexander Zverev",0,6000]]},
+  {id:"wta",name:"Ranking WTA",country:"Individual femenino",teams:[["Aryna Sabalenka",0,9000],["Iga Świątek",0,8800],["Coco Gauff",0,6500],["Elena Rybakina",0,6000]]}
+ ]},
+ {id:"formula1",name:"Fórmula 1",icon:"🏎️",desc:"Mundial de automovilismo",leagues:[
+  {id:"f1",name:"Mundial de pilotos",country:"Fórmula 1",teams:[["Max Verstappen",20,400],["Lando Norris",20,350],["Charles Leclerc",20,320],["Oscar Piastri",20,280],["Carlos Sainz",20,250]]}
+ ]},
+ {id:"ciclismo",name:"Ciclismo",icon:"🚴",desc:"Grandes vueltas y carreras",leagues:[
+  {id:"tour",name:"Tour de Francia",country:"Grandes vueltas",teams:[["Tadej Pogačar",0,1],["Jonas Vingegaard",0,2],["Remco Evenepoel",0,3],["Primož Roglič",0,4]]}
+ ]}
+];
+let currentSport=null,currentLeague=null;
+let favorites=JSON.parse(localStorage.getItem("fansSportFavorites")||"[]");
+const $=id=>document.getElementById(id);
+function saveFavorites(){localStorage.setItem("fansSportFavorites",JSON.stringify(favorites));$("favCount").textContent=favorites.length}
+function setNav(which){$("homeBtn").classList.toggle("active",which==="home");$("favBtn").classList.toggle("active",which==="fav")}
+function showOnly(id){["homeView","leagueView","tableView","favoritesView"].forEach(v=>$(v).classList.add("hidden"));$(id).classList.remove("hidden")}
+function showHome(){showOnly("homeView");setNav("home");renderSports()}
+function renderSports(){
+ const q=$("sportSearch").value.toLowerCase();
+ $("sportsGrid").innerHTML=sports.filter(s=>(s.name+" "+s.desc).toLowerCase().includes(q)).map(s=>`<div class="card clickcard" onclick="openSport('${s.id}')"><div class="cardtop"><div class="cardicon">${s.icon}</div><span class="arrow">↗</span></div><h3>${s.name}</h3><p>${s.desc}</p></div>`).join("")||'<div class="empty">No se han encontrado deportes.</div>';
+}
+function openSport(id){currentSport=sports.find(s=>s.id===id);$("sportEyebrow").textContent=currentSport.icon+" DEPORTE";$("sportTitle").textContent=currentSport.name;$("leaguesGrid").innerHTML=currentSport.leagues.map(l=>`<div class="card clickcard" onclick="openLeague('${l.id}')"><div class="cardtop"><div class="cardicon">🏆</div><span class="arrow">↗</span></div><h3>${l.name}</h3><p>${l.country}</p></div>`).join("");showOnly("leagueView");setNav("home")}
+function openLeague(id){currentLeague=currentSport.leagues.find(l=>l.id===id);$("leagueSport").textContent=currentSport.name;$("leagueTitle").textContent=currentLeague.name;$("teamSearch").value="";renderTable();showOnly("tableView");setNav("home")}
+function backToLeagues(){if(currentSport)openSport(currentSport.id)}
+function teamKey(team){return currentSport.id+"|"+currentLeague.id+"|"+team}
+function renderTable(){
+ const q=$("teamSearch").value.toLowerCase();
+ $("tableBody").innerHTML=currentLeague.teams.filter(t=>t[0].toLowerCase().includes(q)).map((t,i)=>{let key=teamKey(t[0]),on=favorites.some(f=>f.key===key);return `<tr><td class="pos">${i+1}</td><td class="team">${t[0]}</td><td>${t[1]||"—"}</td><td class="points">${t[2]}</td><td><button class="star ${on?"on":""}" aria-label="Guardar favorito" onclick="toggleFavorite('${encodeURIComponent(key)}','${encodeURIComponent(t[0])}','${currentSport.id}','${currentLeague.id}')">${on?"★":"☆"}</button></td></tr>`}).join("")||'<tr><td colspan="5">No se han encontrado equipos.</td></tr>';
+}
+function toggleFavorite(keyEncoded,nameEncoded,sportId,leagueId){
+ const key=decodeURIComponent(keyEncoded),name=decodeURIComponent(nameEncoded);
+ if(favorites.some(f=>f.key===key))favorites=favorites.filter(f=>f.key!==key);
+ else favorites.push({key,name,sportId,leagueId});
+ saveFavorites();
+ if(!$("tableView").classList.contains("hidden"))renderTable();
+ if(!$("favoritesView").classList.contains("hidden"))renderFavorites();
+}
+function showFavorites(){showOnly("favoritesView");setNav("fav");renderFavorites()}
+function renderFavorites(){
+ const grid=$("favoritesGrid");
+ if(!favorites.length){grid.innerHTML='<div class="empty">Todavía no tienes equipos favoritos. Entra en una clasificación y pulsa ☆ para añadirlos.</div>';return}
+ grid.innerHTML=favorites.map(f=>{let s=sports.find(x=>x.id===f.sportId),l=s?.leagues.find(x=>x.id===f.leagueId);return `<div class="card"><div class="cardtop"><div class="cardicon">${s?.icon||"⭐"}</div><button class="star on" onclick="removeFavorite('${encodeURIComponent(f.key)}')">★</button></div><h3>${f.name}</h3><p>${s?.name||""} · ${l?.name||""}</p></div>`}).join("");
+}
+function removeFavorite(key){favorites=favorites.filter(f=>f.key!==decodeURIComponent(key));saveFavorites();renderFavorites()}
+saveFavorites();showHome();
+</script>
+</body>
+</html>
